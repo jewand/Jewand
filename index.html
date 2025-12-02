@@ -51,8 +51,33 @@
     .toggle-container {
         margin-top: 10px;
     }
+
+    /* Notification style */
+    .notification-bar {
+        background: #0077ff;
+        color: white;
+        padding: 12px;
+        text-align: center;
+        display: none; /* hidden until JS shows it */
+        font-weight: bold;
+        border-radius: 4px;
+        margin-bottom: 20px;
+    }
+
+    .loading {
+        color: orange;
+        font-weight: bold;
+        margin-top: 10px;
+    }
+
+    .success {
+        color: green;
+        font-weight: bold;
+        margin-top: 10px;
+    }
 </style>
 </head>
+
 <body>
 <header>
     <h1 id="welcome-message">Welcome to My Portfolio</h1>
@@ -70,6 +95,9 @@
     </nav>
 </header>
 
+<!-- Notification added by JS -->
+<div id="notification" class="notification-bar"></div>
+
 <main>
     <section id="about">
         <h2>About Me</h2>
@@ -77,7 +105,7 @@
     </section>
 
     <section id="skills">
-        <h2>My Skills</h2>
+        <h2 id="skills-heading">My Skills</h2>
         <ul id="skills-list"></ul>
     </section>
 
@@ -90,65 +118,100 @@
             <textarea id="message-field" placeholder="Your Message" rows="5" required></textarea>
             <button type="submit">Submit</button>
         </form>
+
+        <!-- form messages will be added here -->
+        <div id="form-status"></div>
     </section>
 </main>
 
 <footer>
-    <p>&copy; 2025 Jewand</p>
+    <p>&copy; 2025 My Name</p>
 </footer>
 
 <script>
-    // Prompt and conditional logic
-    let userName = prompt("Welcome! What is your name?");
+/* --------------- Personalized Name Prompt --------------- */
+let userName = prompt("Welcome! What is your name?");
+const welcomeMessage = document.getElementById("welcome-message");
 
-    const welcomeMessage = document.getElementById("welcome-message");
-    const introText = document.getElementById("intro-text");
+if (!userName || userName.trim() === "") {
+    userName = "Guest";
+}
+welcomeMessage.textContent = "Welcome to My Portfolio, " + userName + "!";
 
-    if (userName && userName.trim() !== "") {
-        welcomeMessage.textContent = "Welcome to My Portfolio, " + userName + "!";
-    } else {
-        userName = "Guest";
-        welcomeMessage.textContent = "Welcome to My Portfolio, Guest!";
-    }
 
-    // Loop to display skills
-    const skills = ["HTML", "CSS", "JavaScript", "Git & GitHub", "Responsive Design"];
+/* --------------- Dynamically Add New Section Content --------------- */
+// Add a new paragraph about a recent project
+const aboutSection = document.querySelector("#about");
+const newParagraph = document.createElement("p");
+newParagraph.textContent = "Recently, I completed an exciting project involving JavaScript DOM manipulation!";
+aboutSection.appendChild(newParagraph);
 
-    const skillsList = document.getElementById("skills-list");
-    skills.forEach(function(skill) {
-        const li = document.createElement("li");
-        li.textContent = skill;
-        skillsList.appendChild(li);
-    });
 
-    // Dark mode toggle
-    const darkModeToggle = document.getElementById("dark-mode-toggle");
-    darkModeToggle.addEventListener("change", function () {
-        document.body.classList.toggle("dark-mode", darkModeToggle.checked);
-    });
+/* --------------- Add Delayed Notification --------------- */
+const notificationBar = document.getElementById("notification");
 
-    // Form submit event listener
-    const contactForm = document.getElementById("contact-form");
-    contactForm.addEventListener("submit", function (event) {
-        event.preventDefault(); // stop actual form submission (page reload)
+setTimeout(() => {
+    notificationBar.textContent = "🎉 New Update: Check out my latest project in the About section!";
+    notificationBar.style.display = "block";
+}, 2000);
 
-        const nameValue = document.getElementById("name-field").value;
-        const emailValue = document.getElementById("email-field").value;
-        const subjectValue = document.getElementById("subject-field").value;
-        const messageValue = document.getElementById("message-field").value;
 
-        // Simple confirmation message
-        alert(
-            "Thank you, " + nameValue + "! Your message has been received.\n\n" +
-            "Email: " + emailValue + "\n" +
-            "Subject: " + subjectValue + "\n" +
-            "Message: " + messageValue
-        );
+/* --------------- Modify Existing Elements --------------- */
+// Change Skills heading style
+const skillsHeading = document.querySelector("#skills-heading");
+skillsHeading.style.color = "blue";
+skillsHeading.style.fontSize = "28px";
 
-        // Clear the form
+
+/* --------------- Loop to Display Skills --------------- */
+const skills = ["HTML", "CSS", "JavaScript", "Git & GitHub", "Responsive Design"];
+const skillsList = document.getElementById("skills-list");
+
+skills.forEach(skill => {
+    const li = document.createElement("li");
+    li.textContent = skill;
+    skillsList.appendChild(li);
+});
+
+
+/* --------------- Dark Mode Toggle --------------- */
+const darkModeToggle = document.getElementById("dark-mode-toggle");
+darkModeToggle.addEventListener("change", function () {
+    document.body.classList.toggle("dark-mode", darkModeToggle.checked);
+});
+
+
+/* --------------- Form Submission with Delay --------------- */
+const contactForm = document.getElementById("contact-form");
+const formStatus = document.getElementById("form-status");
+
+contactForm.addEventListener("submit", function(event) {
+    event.preventDefault(); // stop form
+
+    // Clear previous messages
+    formStatus.innerHTML = "";
+
+    // Show loading message
+    const loadingMessage = document.createElement("p");
+    loadingMessage.classList.add("loading");
+    loadingMessage.textContent = "Sending message...";
+    formStatus.appendChild(loadingMessage);
+
+    // Delay confirmation
+    setTimeout(() => {
+        loadingMessage.remove();
+
+        const successMessage = document.createElement("p");
+        successMessage.classList.add("success");
+        successMessage.textContent = "Message sent successfully! 🎉";
+        formStatus.appendChild(successMessage);
+
         contactForm.reset();
-    });
+    }, 2500);
+});
 </script>
+
 </body>
 </html>
+
 
